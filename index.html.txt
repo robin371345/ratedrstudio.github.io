@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YouTube Channel Player</title>
+
+<style>
+:root {
+    --bg: #0f0f0f;
+    --text: #ffffff;
+    --card: #1f1f1f;
+    --btn: #ff0000;
+}
+
+.light {
+    --bg: #f4f4f4;
+    --text: #000000;
+    --card: #ffffff;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    text-align: center;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+.card {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+button, select {
+    padding: 10px 16px;
+    font-size: 15px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    border: none;
+}
+
+button {
+    background: var(--btn);
+    color: white;
+}
+
+select {
+    background: #333;
+    color: white;
+}
+
+.light select {
+    background: #ddd;
+    color: black;
+}
+
+#player {
+    margin-top: 20px;
+    aspect-ratio: 16/9;
+    width: 100%;
+}
+
+.stats {
+    margin-top: 15px;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+@media (max-width: 600px) {
+    button, select {
+        width: 100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>🎬 My YouTube Channel</h1>
+
+    <div class="card">
+
+        <!-- Playlist Selector -->
+        <select id="playlistSelect" onchange="changePlaylist()">
+            <option value="UUXXXXXXXXXXXX">Uploads</option>
+            <option value="PLYYYYYYYYYYYY">Playlist 1</option>
+            <option value="PLZZZZZZZZZZZZ">Playlist 2</option>
+        </select>
+
+        <br>
+
+        <button onclick="toggleTheme()">🌙 / ☀️ Theme</button>
+        <button onclick="goFullscreen()">⛶ Fullscreen</button>
+
+        <div id="player"></div>
+
+        <div class="stats">
+            Page Plays: <span id="views">0</span>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+
+<script>
+let player;
+
+// ---------- ANALYTICS (LEGAL, LOCAL) ----------
+let views = localStorage.getItem("page_views") || 0;
+views++;
+localStorage.setItem("page_views", views);
+document.getElementById("views").innerText = views;
+
+// ---------- THEME ----------
+function toggleTheme() {
+    document.body.classList.toggle("light");
+}
+
+// ---------- YOUTUBE PLAYER ----------
+function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+        playerVars: {
+            listType: 'playlist',
+            list: document.getElementById("playlistSelect").value,
+            autoplay: 1,
+            mute: 1,
+            rel: 0,
+            modestbranding: 1
+        },
+        events: {
+            'onReady': e => e.target.playVideo()
+        }
+    });
+}
+
+// ---------- CHANGE PLAYLIST ----------
+function changePlaylist() {
+    const playlistId = document.getElementById("playlistSelect").value;
+    player.loadPlaylist({ list: playlistId });
+}
+
+// ---------- FULLSCREEN ----------
+function goFullscreen() {
+    const iframe = document.getElementById("player");
+    if (iframe.requestFullscreen) iframe.requestFullscreen();
+}
+</script>
+
+</body>
+</html>
